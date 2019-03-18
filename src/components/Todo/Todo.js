@@ -1,129 +1,142 @@
-import React, { Component } from 'react';
+import React, { Component } from "react"
 
-import { AuthUserContext } from '../Session';
-import { withFirebase } from '../Firebase';
-import TodoList from './TodoList';
+import { AuthUserContext } from "../Session"
+import { withFirebase } from "../Firebase"
+import TodoList from "./TodoList"
 
 class Todo extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props)
 
-        this.state = {
-            text: '',
-            loading: false,
-            todos: [],
-            // limit: 5,
-        };
+    this.state = {
+      text: "",
+      loading: false,
+      todos: []
+      // limit: 5,
     }
+  }
 
-    componentDidMount() {
-        this.onListenToTodos();
-    }
+  componentDidMount() {
+    this.onListenToTodos()
+  }
 
-    onListenToTodos() {
-        this.setState({ loading: true });
+  onListenToTodos() {
+    this.setState({ loading: true })
 
-        this.props.firebase.todos()
-        .orderByChild('createdAt')
-        .on('value', snapshot => {
-            const todoObject = snapshot.val();
+    this.props.firebase
+      .todos()
+      .orderByChild("createdAt")
+      .on("value", snapshot => {
+        const todoObject = snapshot.val()
 
-            if (todoObject) {
-                const todoList = Object.keys(todoObject).map(key => ({
-                    ...todoObject[key],
-                    uid: key,
-                }));
+        if (todoObject) {
+          const todoList = Object.keys(todoObject).map(key => ({
+            ...todoObject[key],
+            uid: key
+          }))
 
-                this.setState({ 
-                    todos: todoList,
-                    loading: false,
-                });
-            } else {
-                this.setState({ todos: null, loading: false });
-            }
-        });
-    }
+          this.setState({
+            todos: todoList,
+            loading: false
+          })
+        } else {
+          this.setState({ todos: null, loading: false })
+        }
+      })
+  }
 
-    componentWillUnmount() {
-        this.props.firebase.todos().off();
-    }
+  componentWillUnmount() {
+    this.props.firebase.todos().off()
+  }
 
-    onChangeText = event => {
-        this.setState({ text: event.target.value });
-    };
+  onChangeText = event => {
+    this.setState({ text: event.target.value })
+  }
 
-    onCreateTodo = (event, authUser) => {
-        this.props.firebase.todos().push({
-            text: this.state.text,
-            userId: authUser.uid,
-            createdAt: this.props.firebase.serverValue.TIMESTAMP,
-        });
+  onCreateTodo = (event, authUser) => {
+    this.props.firebase.todos().push({
+      text: this.state.text,
+      userId: authUser.uid,
+      createdAt: this.props.firebase.serverValue.TIMESTAMP
+    })
 
-        this.setState({ text: '' });
+    this.setState({ text: "" })
 
-        event.preventDefault();
-    }
+    event.preventDefault()
+  }
 
-    onEditTodo = (todo, text) => {
-        this.props.firebase.todo(todo.uid).set({
-            ...todo,
-            text,
-            editedAt: this.props.firebase.serverValue.TIMESTAMP,
-        });
-    };
+  onEditTodo = (todo, text) => {
+    this.props.firebase.todo(todo.uid).set({
+      ...todo,
+      text,
+      editedAt: this.props.firebase.serverValue.TIMESTAMP
+    })
+  }
 
-    onRemoveTodo = uid => {
-        this.props.firebase.todo(uid).remove();
-    };
+  onRemoveTodo = uid => {
+    this.props.firebase.todo(uid).remove()
+  }
 
-    onNextPage = () => {
-        this.setState(
-            state => ({ limit: state.limit + 5 }),
-            this.onListenToTodos,
-        );
-    };
+  onNextPage = () => {
+    this.setState(state => ({ limit: state.limit + 5 }), this.onListenToTodos)
+  }
 
-    render() {
-        const { users } = this.props;
-        const { text, todos, loading } = this.state;
+  render() {
+    const { users } = this.props
+    const { text, todos, loading } = this.state
 
-        return (
-            <AuthUserContext.Consumer>
-                {authUser => (
-                    <div>
-                        {loading && <div>loading...</div>}
+    return (
+      <AuthUserContext.Consumer>
+        {authUser => (
+          <div>
+            {loading && <div>loading...</div>}
+            <label> {authUser.email} </label>
+            {todos ? (
+              <div>
+                {console.log(authUser)}
+                <TodoList
+                  todos={todos.filter(todo => authUser.uid === todo.userId)}
+                  onEditTodo={this.onEditTodo}
+                  onRemoveTodo={this.onRemoveTodo}
+                />
+              </div>
+            ) : (
+              <div class="alert alert-primary" role="alert">
+                There are no todos ...
+              </div>
+            )}
 
-                        {todos ? (
-                            <TodoList 
-                                todos={todos.map(todo => ({
-                                    ...todo,
-                                    user: users ? users[todo.userId] : { userId: todo.userId },
-                                }))}
-                                onEditTodo={this.onEditTodo}
-                                onRemoveTodo={this.onRemoveTodo}
-                            />
-                        ) : (
-                            <div class="alert alert-primary" role="alert">There are no todos ...</div>
-                        )}
-
-                        <div class="top-to-item">
-                            <form onSubmit={event => this.onCreateTodo(event, authUser)}>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-list-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Enter your Todo item" value={text} onChange={this.onChangeText} />
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-outline-primary my-2 my-sm-0"><i class="fas fa-share-square"></i> Add</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </AuthUserContext.Consumer>
-        );
-    }
+            <div class="top-to-item">
+              <form onSubmit={event => this.onCreateTodo(event, authUser)}>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="fas fa-list-alt" />
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter your Todo item"
+                    value={text}
+                    onChange={this.onChangeText}
+                  />
+                  <div class="input-group-append">
+                    <button
+                      type="submit"
+                      class="btn btn-outline-primary my-2 my-sm-0"
+                    >
+                      <i class="fas fa-share-square" /> Add
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </AuthUserContext.Consumer>
+    )
+  }
 }
 
-export default withFirebase(Todo);
+export default withFirebase(Todo)

@@ -1,57 +1,71 @@
-import React, { Component } from 'react';
+import React, { Component } from "react"
 
 class TodoItem extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props)
 
-        this.state = {
-            editMode: false,
-            editText: this.props.todo.text,
-        };
+    this.state = {
+      editMode: false,
+      editText: this.props.todo.text
     }
+  }
 
-    onToggleEditMode = () => {
-        this.setState(state => ({
-            editMode: !state.editMode,
-            editText: this.props.todo.text,
-        }));
-    };
+  onToggleEditMode = () => {
+    this.setState(state => ({
+      editMode: !state.editMode,
+      editText: this.props.todo.text
+    }))
+  }
 
-    onChangeEditText = event => {
-        this.setState({ editText: event.target.value });
-    };
+  onChangeEditText = event => {
+    this.setState({ editText: event.target.value })
+  }
 
-    onSaveEditText = () => {
-        this.props.onEditTodo(this.props.todo, this.state.editText);
+  onSaveEditText = () => {
+    this.props.onEditTodo(this.props.todo, this.state.editText)
 
-        this.setState({ editMode: false });
-    }
+    this.setState({ editMode: false })
+  }
 
-    render() {
-        const { todo, onRemoveTodo } = this.props;
-        const { editMode, editText } = this.state;
+  render() {
+    const { todo, onRemoveTodo } = this.props
+    const { editMode, editText } = this.state
 
-        return (
-            <tbody>
-                <tr>
-                {editMode ? (
-                    <div>
-                        <td>
-                            <input type="text" value={editText} onChange={this.onChangeEditText} />
-                            <button type="button" class="btn-sm btn-outline-primary my-2 my-sm-0" onClick={this.onSaveEditText}><i class="fas fa-save"></i> </button>
-                            <button type="button" class="btn-sm btn-outline-primary my-2 my-sm-0" onClick={this.onToggleEditMode}><i class="fas fa-undo-alt"></i> </button>
-                        </td>
-                    </div>
-                ) : (
-                    <div>
-                        <td>{todo.user.username}</td>
-                        <td>{todo.user.userId}</td>
-                        <td>{todo.text}</td>
-                        <td>{todo.editedAt && <span>(Edited)</span>}</td>
-                    </div>
-                )}
+    return (
+      <tbody>
+        <tr>
+          {editMode ? (
+            <div>
+              <td>
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={this.onChangeEditText}
+                />
+                <button
+                  type="button"
+                  class="btn-sm btn-outline-primary my-2 my-sm-0"
+                  onClick={this.onSaveEditText}
+                >
+                  <i class="fas fa-save" />{" "}
+                </button>
+                <button
+                  type="button"
+                  class="btn-sm btn-outline-primary my-2 my-sm-0"
+                  onClick={this.onToggleEditMode}
+                >
+                  <i class="fas fa-undo-alt" />{" "}
+                </button>
+              </td>
+            </div>
+          ) : (
+            <div>
+              <td>{todo.text}</td>
+              <td>{todo.editedAt && <span>(Edited)</span>}</td>
+            </div>
+          )}
 
-                {/* {editMode ? (
+          {/* {editMode ? (
                     <input type="text" value={editText} onChange={this.onChangeEditText} />
                 ) : (
                     <span>
@@ -59,8 +73,8 @@ class TodoItem extends Component {
                         {message.text} {message.editedAt && <span>(Edited)</span>}
                     </span>
                 )} */}
-                
-                {/* {editMode ? (
+
+          {/* {editMode ? (
                     <span>
                         <button type="button" onClick={this.onSaveEditText}>Save</button>
                         <button type="button" onClick={this.onToggleEditMode}>Cancel</button>
@@ -69,16 +83,28 @@ class TodoItem extends Component {
                     <button type="button" onClick={this.onToggleEditMode}>Edit</button>
                 )} */}
 
-                {!editMode && (
-                    <td>
-                        <button type="button" class="btn-sm btn-outline-primary my-2 my-sm-0" onClick={this.onToggleEditMode}><i class="fas fa-pen-square"></i> </button>{' '}
-                        <button type="button" class="btn-sm btn-outline-danger my-2 my-sm-0" onClick={() => onRemoveTodo(todo.uid)}><i class="fas fa-minus-square"></i> </button>
-                    </td>
-                )}
-                </tr>
-            </tbody>
-        );
-    }
+          {!editMode && (
+            <td>
+              <button
+                type="button"
+                class="btn-sm btn-outline-primary my-2 my-sm-0"
+                onClick={this.onToggleEditMode}
+              >
+                <i class="fas fa-pen-square" />{" "}
+              </button>{" "}
+              <button
+                type="button"
+                class="btn-sm btn-outline-danger my-2 my-sm-0"
+                onClick={() => onRemoveTodo(todo.uid)}
+              >
+                <i class="fas fa-minus-square" />{" "}
+              </button>
+            </td>
+          )}
+        </tr>
+      </tbody>
+    )
+  }
 }
 
-export default TodoItem;
+export default TodoItem
