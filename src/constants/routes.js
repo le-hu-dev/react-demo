@@ -1,0 +1,10 @@
+export const SIGN_UP            = '/register';
+export const SIGN_IN            = '/login';
+export const LANDING            = '/';
+export const HOME               = '/home';
+export const TODO               = '/todo';
+export const SEARCH             = '/search';
+export const ACCOUNT            = '/account';
+export const ADMIN              = '/admin';
+export const ADMIN_DETAILS      = '/admin/:id';
+export const PASSWORD_FORGOT    = '/password-forgot';
