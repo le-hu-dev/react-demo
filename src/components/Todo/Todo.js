@@ -7,12 +7,11 @@ import TodoList from "./TodoList"
 class Todo extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       text: "",
       loading: false,
+      //data source
       todos: []
-      // limit: 5,
     }
   }
 
@@ -22,7 +21,6 @@ class Todo extends Component {
 
   onListenToTodos() {
     this.setState({ loading: true })
-
     this.props.firebase
       .todos()
       .orderByChild("createdAt")
@@ -57,14 +55,16 @@ class Todo extends Component {
     this.props.firebase.todos().push({
       text: this.state.text,
       userId: authUser.uid,
-      createdAt: this.props.firebase.serverValue.TIMESTAMP
+      createdAt: this.props.firebase.serverValue.TIMESTAMP,
+      // completed ? yse/no
+      completed: false
     })
 
     this.setState({ text: "" })
-
     event.preventDefault()
   }
 
+  // text = {"aasdfasdf"}
   onEditTodo = (todo, text) => {
     this.props.firebase.todo(todo.uid).set({
       ...todo,
@@ -77,12 +77,21 @@ class Todo extends Component {
     this.props.firebase.todo(uid).remove()
   }
 
-  onNextPage = () => {
-    this.setState(state => ({ limit: state.limit + 5 }), this.onListenToTodos)
+  onCheckTodo = todo => {
+    //set style;
+    this.props.firebase.todo(todo.uid).set({
+      ...todo,
+      completed: !todo.completed,
+      editedAt: this.props.firebase.serverValue.TIMESTAMP
+    })
   }
 
+  // onNextPage = () => {
+  //   this.setState(state => ({ limit: state.limit + 5 }), this.onListenToTodos)
+  // }
+
   render() {
-    const { users } = this.props
+    // const { users } = this.props
     const { text, todos, loading } = this.state
 
     return (
@@ -93,11 +102,11 @@ class Todo extends Component {
             <label> {authUser.email} </label>
             {todos ? (
               <div>
-                {console.log(authUser)}
                 <TodoList
                   todos={todos.filter(todo => authUser.uid === todo.userId)}
                   onEditTodo={this.onEditTodo}
                   onRemoveTodo={this.onRemoveTodo}
+                  onCheckTodo={this.onCheckTodo}
                 />
               </div>
             ) : (

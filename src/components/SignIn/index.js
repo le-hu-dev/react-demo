@@ -51,8 +51,8 @@ class SignInFormBase extends Component {
         this.props.history.push(ROUTES.HOME);
       })
       .catch(error => {
-        this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.HOME);
+        // this.setState({ ...INITIAL_STATE });
+        // this.props.history.push(ROUTES.HOME);
         if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
           error.message = ERROR_MSG_ACCOUNT_EXISTS;
         }

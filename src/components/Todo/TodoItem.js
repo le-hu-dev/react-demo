@@ -23,13 +23,13 @@ class TodoItem extends Component {
 
   onSaveEditText = () => {
     this.props.onEditTodo(this.props.todo, this.state.editText)
-
     this.setState({ editMode: false })
   }
 
   render() {
-    const { todo, onRemoveTodo } = this.props
+    const { todo, onRemoveTodo, onCheckTodo } = this.props
     const { editMode, editText } = this.state
+    const isDone = todo.completed ? "done" : "undone"
 
     return (
       <tbody>
@@ -60,8 +60,16 @@ class TodoItem extends Component {
             </div>
           ) : (
             <div>
-              <td>{todo.text}</td>
-              <td>{todo.editedAt && <span>(Edited)</span>}</td>
+              <td>
+                <label className={isDone}>
+                  <input
+                    type="checkbox"
+                    onChange={() => onCheckTodo(todo)}
+                    checked={todo.completed}
+                  />
+                  {todo.text} {todo.editedAt && <span>(Edited)</span>}
+                </label>
+              </td>
             </div>
           )}
 
