@@ -147,6 +147,10 @@ body {
 }
 
 .done {
-  color: red;
+  color: #ea4335;
   text-decoration: line-through;
+}
+
+.text-md {
+  font-size: 80%;
 }
